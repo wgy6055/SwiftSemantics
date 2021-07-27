@@ -43,6 +43,8 @@ public struct Variable: Declaration, Hashable, Codable {
         /// The kind of accessor.
         public let kind: Kind?
     }
+
+    public let lineComment: String?
 }
 
 // MARK: - ExpressibleBySyntax
@@ -71,6 +73,16 @@ extension Variable: ExpressibleBySyntax {
         typeAnnotation = node.typeAnnotation?.type.description.trimmed
         initializedValue = node.initializer?.value.description.trimmed
         accessors = Accessor.accessors(from: node.accessor?.as(AccessorBlockSyntax.self))
+        // find a lineComment for variable
+        if let comment = parent.attributes?.first?.lineComment {
+            lineComment = comment
+        } else if let comment = parent.modifiers?.first?.lineComment {
+            lineComment = comment
+        } else if let comment = parent.letOrVarKeyword.lineComment {
+            lineComment = comment
+        } else {
+            lineComment = nil
+        }
     }
 }
 
