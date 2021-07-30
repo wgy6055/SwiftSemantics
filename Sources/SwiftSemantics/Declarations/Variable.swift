@@ -45,6 +45,8 @@ public struct Variable: Declaration, Hashable, Codable {
     }
 
     public let lineComment: String?
+
+    public let classaaa: Class?
 }
 
 // MARK: - ExpressibleBySyntax
@@ -82,6 +84,17 @@ extension Variable: ExpressibleBySyntax {
             lineComment = comment
         } else {
             lineComment = nil
+        }
+        var classDecl: ClassDeclSyntax?
+        for case let node? in sequence(first: node.parent, next: { $0?.parent }) {
+            guard let declaration = node.asProtocol(DeclSyntaxProtocol.self) as? ClassDeclSyntax else { continue }
+            classDecl = declaration
+            break
+        }
+        if let classDecl = classDecl {
+            classaaa = Class(classDecl)
+        } else {
+            classaaa = nil
         }
     }
 }
